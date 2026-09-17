@@ -159,3 +159,37 @@
     color: var(--color-foreground);
   }
 }
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+  }
+  h1, h2, h3 {
+    font-family: var(--font-serif);
+  }
+}
+
+@utility num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+@utility panel {
+  background-color: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+
+@utility field {
+  width: 100%;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-md);
+  background-color: var(--card);
+  padding: 0.5rem 0.65rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  &:focus {
+    outline: 2px solid var(--ring);
+    outline-offset: 1px;
+  }
+}
