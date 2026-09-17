@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as IssueRouteImport } from './routes/issue'
 import { Route as ReceiveRouteImport } from './routes/receive'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IssueRoute = IssueRouteImport.update({
+  id: '/issue',
+  path: '/issue',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReceiveRoute = ReceiveRouteImport.update({
@@ -25,27 +31,31 @@ const ReceiveRoute = ReceiveRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/issue': typeof IssueRoute
   '/receive': typeof ReceiveRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/issue': typeof IssueRoute
   '/receive': typeof ReceiveRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/issue': typeof IssueRoute
   '/receive': typeof ReceiveRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/receive'
+  fullPaths: '/' | '/issue' | '/receive'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/receive'
-  id: '__root__' | '/' | '/receive'
+  to: '/' | '/issue' | '/receive'
+  id: '__root__' | '/' | '/issue' | '/receive'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  IssueRoute: typeof IssueRoute
   ReceiveRoute: typeof ReceiveRoute
 }
 
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/issue': {
+      id: '/issue'
+      path: '/issue'
+      fullPath: '/issue'
+      preLoaderRoute: typeof IssueRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/receive': {
@@ -70,6 +87,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  IssueRoute: IssueRoute,
   ReceiveRoute: ReceiveRoute,
 }
 export const routeTree = rootRouteImport
