@@ -14,7 +14,157 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      issues: {
+        Row: {
+          authorised_by: string | null
+          balance_stock: number
+          created_at: string
+          department: string | null
+          id: string
+          issue_date: string
+          issued_by: string | null
+          issued_to: string
+          item_id: string
+          qty_issued: number
+          using_area: string | null
+          voucher_no: string
+        }
+        Insert: {
+          authorised_by?: string | null
+          balance_stock?: number
+          created_at?: string
+          department?: string | null
+          id?: string
+          issue_date?: string
+          issued_by?: string | null
+          issued_to: string
+          item_id: string
+          qty_issued?: number
+          using_area?: string | null
+          voucher_no: string
+        }
+        Update: {
+          authorised_by?: string | null
+          balance_stock?: number
+          created_at?: string
+          department?: string | null
+          id?: string
+          issue_date?: string
+          issued_by?: string | null
+          issued_to?: string
+          item_id?: string
+          qty_issued?: number
+          using_area?: string | null
+          voucher_no?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "issues_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      items: {
+        Row: {
+          available_stock: number
+          created_at: string
+          id: string
+          main_head: string
+          name: string
+          reorder_level: number
+          sub_head: string
+          unit: string
+          unit_price: number
+        }
+        Insert: {
+          available_stock?: number
+          created_at?: string
+          id?: string
+          main_head: string
+          name: string
+          reorder_level?: number
+          sub_head: string
+          unit?: string
+          unit_price?: number
+        }
+        Update: {
+          available_stock?: number
+          created_at?: string
+          id?: string
+          main_head?: string
+          name?: string
+          reorder_level?: number
+          sub_head?: string
+          unit?: string
+          unit_price?: number
+        }
+        Relationships: []
+      }
+      receipts: {
+        Row: {
+          approved_by: string | null
+          bill_no: string | null
+          created_at: string
+          expiry_date: string | null
+          id: string
+          item_id: string
+          mfg_date: string | null
+          purchase_date: string
+          quantity: number
+          total_amount: number
+          unit_price: number
+          vendor_address: string | null
+          vendor_name: string
+          vendor_phone: string | null
+          voucher_no: string
+        }
+        Insert: {
+          approved_by?: string | null
+          bill_no?: string | null
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          item_id: string
+          mfg_date?: string | null
+          purchase_date?: string
+          quantity?: number
+          total_amount?: number
+          unit_price?: number
+          vendor_address?: string | null
+          vendor_name: string
+          vendor_phone?: string | null
+          voucher_no: string
+        }
+        Update: {
+          approved_by?: string | null
+          bill_no?: string | null
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          item_id?: string
+          mfg_date?: string | null
+          purchase_date?: string
+          quantity?: number
+          total_amount?: number
+          unit_price?: number
+          vendor_address?: string | null
+          vendor_name?: string
+          vendor_phone?: string | null
+          voucher_no?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receipts_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
