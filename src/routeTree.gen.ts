@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as IssueRouteImport } from './routes/issue'
+import { Route as LedgerRouteImport } from './routes/ledger'
 import { Route as ReceiveRouteImport } from './routes/receive'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +24,11 @@ const IssueRoute = IssueRouteImport.update({
   path: '/issue',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LedgerRoute = LedgerRouteImport.update({
+  id: '/ledger',
+  path: '/ledger',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReceiveRoute = ReceiveRouteImport.update({
   id: '/receive',
   path: '/receive',
@@ -32,30 +38,34 @@ const ReceiveRoute = ReceiveRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/issue': typeof IssueRoute
+  '/ledger': typeof LedgerRoute
   '/receive': typeof ReceiveRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/issue': typeof IssueRoute
+  '/ledger': typeof LedgerRoute
   '/receive': typeof ReceiveRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/issue': typeof IssueRoute
+  '/ledger': typeof LedgerRoute
   '/receive': typeof ReceiveRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/issue' | '/receive'
+  fullPaths: '/' | '/issue' | '/ledger' | '/receive'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/issue' | '/receive'
-  id: '__root__' | '/' | '/issue' | '/receive'
+  to: '/' | '/issue' | '/ledger' | '/receive'
+  id: '__root__' | '/' | '/issue' | '/ledger' | '/receive'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   IssueRoute: typeof IssueRoute
+  LedgerRoute: typeof LedgerRoute
   ReceiveRoute: typeof ReceiveRoute
 }
 
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IssueRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ledger': {
+      id: '/ledger'
+      path: '/ledger'
+      fullPath: '/ledger'
+      preLoaderRoute: typeof LedgerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/receive': {
       id: '/receive'
       path: '/receive'
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   IssueRoute: IssueRoute,
+  LedgerRoute: LedgerRoute,
   ReceiveRoute: ReceiveRoute,
 }
 export const routeTree = rootRouteImport
