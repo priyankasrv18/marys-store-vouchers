@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as IssueRouteImport } from './routes/issue'
 import { Route as LedgerRouteImport } from './routes/ledger'
 import { Route as ReceiveRouteImport } from './routes/receive'
+import { Route as VouchersRouteImport } from './routes/vouchers'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +35,25 @@ const ReceiveRoute = ReceiveRouteImport.update({
   path: '/receive',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VouchersRoute = VouchersRouteImport.update({
+  id: '/vouchers',
+  path: '/vouchers',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/issue': typeof IssueRoute
   '/ledger': typeof LedgerRoute
   '/receive': typeof ReceiveRoute
+  '/vouchers': typeof VouchersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/issue': typeof IssueRoute
   '/ledger': typeof LedgerRoute
   '/receive': typeof ReceiveRoute
+  '/vouchers': typeof VouchersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,14 @@ export interface FileRoutesById {
   '/issue': typeof IssueRoute
   '/ledger': typeof LedgerRoute
   '/receive': typeof ReceiveRoute
+  '/vouchers': typeof VouchersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/issue' | '/ledger' | '/receive'
+  fullPaths: '/' | '/issue' | '/ledger' | '/receive' | '/vouchers'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/issue' | '/ledger' | '/receive'
-  id: '__root__' | '/' | '/issue' | '/ledger' | '/receive'
+  to: '/' | '/issue' | '/ledger' | '/receive' | '/vouchers'
+  id: '__root__' | '/' | '/issue' | '/ledger' | '/receive' | '/vouchers'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +76,7 @@ export interface RootRouteChildren {
   IssueRoute: typeof IssueRoute
   LedgerRoute: typeof LedgerRoute
   ReceiveRoute: typeof ReceiveRoute
+  VouchersRoute: typeof VouchersRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +109,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReceiveRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vouchers': {
+      id: '/vouchers'
+      path: '/vouchers'
+      fullPath: '/vouchers'
+      preLoaderRoute: typeof VouchersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +124,7 @@ const rootRouteChildren: RootRouteChildren = {
   IssueRoute: IssueRoute,
   LedgerRoute: LedgerRoute,
   ReceiveRoute: ReceiveRoute,
+  VouchersRoute: VouchersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
