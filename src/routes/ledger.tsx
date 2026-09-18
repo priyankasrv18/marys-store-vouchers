@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { itemsQuery, MAIN_HEADS, rupees, type Item } from "@/lib/stores";
 
 export const Route = createFileRoute("/ledger")({
@@ -93,8 +93,8 @@ function LedgerPage() {
           </thead>
           <tbody>
             {grouped.map((g) => (
-              <>
-                <tr key={g.head} className="bg-primary/8">
+              <Fragment key={g.head}>
+                <tr className="bg-primary/8">
                   <td colSpan={7} className="px-3 py-1.5 font-serif font-semibold text-primary">
                     {g.head}
                   </td>
@@ -123,7 +123,7 @@ function LedgerPage() {
                     </tr>
                   );
                 })}
-              </>
+              </Fragment>
             ))}
             {grouped.length === 0 && (
               <tr>
