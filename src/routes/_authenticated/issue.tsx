@@ -91,9 +91,7 @@ function IssuePage() {
       if (selected && qty > selected.available_stock)
         throw new Error(`Only ${selected.available_stock} ${selected.unit} available`);
 
-      const { data: auth } = await supabase.auth.getUser();
-      const userId = auth.user?.id;
-      if (!userId) throw new Error("Your session expired — please sign in again");
+      const attachmentOwner = "public";
 
       const { data: issue, error } = await supabase
         .from("issues")
@@ -107,7 +105,7 @@ function IssuePage() {
           qty_issued: qty,
           issued_by: form.issued_by || null,
           authorised_by: form.authorised_by || null,
-          created_by: userId,
+          created_by: null,
         })
         .select("id")
         .single();
@@ -126,7 +124,7 @@ function IssuePage() {
           file_name: file.name,
           mime_type: file.type || null,
           file_size: file.size,
-          uploaded_by: userId,
+          uploaded_by: null,
         });
         if (rowErr) throw rowErr;
       }
