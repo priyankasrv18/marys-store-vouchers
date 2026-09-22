@@ -15,6 +15,13 @@
       "when": 1790050436519,
       "tag": "0001_staff_auth_roles_and_issue_attachments",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790050461833,
+      "tag": "0002_issue_attachment_storage_policies",
+      "breakpoints": true
     }
   ]
 }
