@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Fragment, useState } from "react";
-import { itemsQuery, MAIN_HEADS, rupees, type Item } from "@/lib/stores";
+import { downloadStockLedgerExcel } from "@/lib/excel";
+import { itemsQuery, issuesQuery, MAIN_HEADS, receiptsQuery, rupees, type Item } from "@/lib/stores";
 
 export const Route = createFileRoute("/_authenticated/ledger")({
   head: () => ({
@@ -24,6 +25,8 @@ export const Route = createFileRoute("/_authenticated/ledger")({
 
 function LedgerPage() {
   const items = useQuery(itemsQuery);
+  const receipts = useQuery(receiptsQuery);
+  const issues = useQuery(issuesQuery);
   const [search, setSearch] = useState("");
 
   const all = (items.data ?? []).filter((i) =>
@@ -54,6 +57,14 @@ function LedgerPage() {
     URL.revokeObjectURL(url);
   };
 
+  const exportExcel = () => {
+    downloadStockLedgerExcel({
+      items: all,
+      receipts: receipts.data ?? [],
+      issues: issues.data ?? [],
+    });
+  };
+
   return (
     <div className="space-y-5">
       <header className="flex flex-wrap items-end justify-between gap-3">
@@ -69,6 +80,12 @@ function LedgerPage() {
             onChange={(e) => setSearch(e.target.value)}
             maxLength={60}
           />
+          <button
+            onClick={exportExcel}
+            className="rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground"
+          >
+            Export Excel
+          </button>
           <button
             onClick={exportCsv}
             className="rounded-md border border-line bg-card px-3 py-2 text-sm font-semibold"
