@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { itemsQuery, MAIN_HEADS, voucherNo } from "@/lib/stores";
 
-export const Route = createFileRoute("/issue")({
+export const Route = createFileRoute("/_authenticated/issue")({
   head: () => ({
     meta: [
       { title: "Issue Material | St. Mary's Stores" },

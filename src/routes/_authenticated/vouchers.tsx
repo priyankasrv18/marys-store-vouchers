@@ -9,7 +9,7 @@ import {
   type Item,
 } from "@/lib/stores";
 
-export const Route = createFileRoute("/vouchers")({
+export const Route = createFileRoute("/_authenticated/vouchers")({
   head: () => ({
     meta: [
       { title: "Vouchers | St. Mary's Stores" },

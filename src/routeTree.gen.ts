@@ -9,122 +9,172 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as IssueRouteImport } from './routes/issue'
-import { Route as LedgerRouteImport } from './routes/ledger'
-import { Route as ReceiveRouteImport } from './routes/receive'
-import { Route as VouchersRouteImport } from './routes/vouchers'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedIssueRouteImport } from './routes/_authenticated/issue'
+import { Route as AuthenticatedLedgerRouteImport } from './routes/_authenticated/ledger'
+import { Route as AuthenticatedReceiveRouteImport } from './routes/_authenticated/receive'
+import { Route as AuthenticatedVouchersRouteImport } from './routes/_authenticated/vouchers'
 
-const IndexRoute = IndexRouteImport.update({
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const IssueRoute = IssueRouteImport.update({
+const AuthenticatedIssueRoute = AuthenticatedIssueRouteImport.update({
   id: '/issue',
   path: '/issue',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const LedgerRoute = LedgerRouteImport.update({
+const AuthenticatedLedgerRoute = AuthenticatedLedgerRouteImport.update({
   id: '/ledger',
   path: '/ledger',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const ReceiveRoute = ReceiveRouteImport.update({
+const AuthenticatedReceiveRoute = AuthenticatedReceiveRouteImport.update({
   id: '/receive',
   path: '/receive',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const VouchersRoute = VouchersRouteImport.update({
+const AuthenticatedVouchersRoute = AuthenticatedVouchersRouteImport.update({
   id: '/vouchers',
   path: '/vouchers',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/issue': typeof IssueRoute
-  '/ledger': typeof LedgerRoute
-  '/receive': typeof ReceiveRoute
-  '/vouchers': typeof VouchersRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/auth': typeof AuthRoute
+  '/issue': typeof AuthenticatedIssueRoute
+  '/ledger': typeof AuthenticatedLedgerRoute
+  '/receive': typeof AuthenticatedReceiveRoute
+  '/vouchers': typeof AuthenticatedVouchersRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/issue': typeof IssueRoute
-  '/ledger': typeof LedgerRoute
-  '/receive': typeof ReceiveRoute
-  '/vouchers': typeof VouchersRoute
+  '/auth': typeof AuthRoute
+  '/issue': typeof AuthenticatedIssueRoute
+  '/ledger': typeof AuthenticatedLedgerRoute
+  '/receive': typeof AuthenticatedReceiveRoute
+  '/vouchers': typeof AuthenticatedVouchersRoute
+  '/': typeof AuthenticatedIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/issue': typeof IssueRoute
-  '/ledger': typeof LedgerRoute
-  '/receive': typeof ReceiveRoute
-  '/vouchers': typeof VouchersRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/issue': typeof AuthenticatedIssueRoute
+  '/_authenticated/ledger': typeof AuthenticatedLedgerRoute
+  '/_authenticated/receive': typeof AuthenticatedReceiveRoute
+  '/_authenticated/vouchers': typeof AuthenticatedVouchersRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/issue' | '/ledger' | '/receive' | '/vouchers'
+  fullPaths: '/' | '/auth' | '/issue' | '/ledger' | '/receive' | '/vouchers'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/issue' | '/ledger' | '/receive' | '/vouchers'
-  id: '__root__' | '/' | '/issue' | '/ledger' | '/receive' | '/vouchers'
+  to: '/auth' | '/issue' | '/ledger' | '/receive' | '/vouchers' | '/'
+  id:
+    | '__root__'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/issue'
+    | '/_authenticated/ledger'
+    | '/_authenticated/receive'
+    | '/_authenticated/vouchers'
+    | '/_authenticated/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  IssueRoute: typeof IssueRoute
-  LedgerRoute: typeof LedgerRoute
-  ReceiveRoute: typeof ReceiveRoute
-  VouchersRoute: typeof VouchersRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/': {
+      id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/issue': {
-      id: '/issue'
+    '/_authenticated/issue': {
+      id: '/_authenticated/issue'
       path: '/issue'
       fullPath: '/issue'
-      preLoaderRoute: typeof IssueRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedIssueRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/ledger': {
-      id: '/ledger'
+    '/_authenticated/ledger': {
+      id: '/_authenticated/ledger'
       path: '/ledger'
       fullPath: '/ledger'
-      preLoaderRoute: typeof LedgerRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedLedgerRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/receive': {
-      id: '/receive'
+    '/_authenticated/receive': {
+      id: '/_authenticated/receive'
       path: '/receive'
       fullPath: '/receive'
-      preLoaderRoute: typeof ReceiveRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedReceiveRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/vouchers': {
-      id: '/vouchers'
+    '/_authenticated/vouchers': {
+      id: '/_authenticated/vouchers'
       path: '/vouchers'
       fullPath: '/vouchers'
-      preLoaderRoute: typeof VouchersRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedVouchersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedIssueRoute: typeof AuthenticatedIssueRoute
+  AuthenticatedLedgerRoute: typeof AuthenticatedLedgerRoute
+  AuthenticatedReceiveRoute: typeof AuthenticatedReceiveRoute
+  AuthenticatedVouchersRoute: typeof AuthenticatedVouchersRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedIssueRoute: AuthenticatedIssueRoute,
+  AuthenticatedLedgerRoute: AuthenticatedLedgerRoute,
+  AuthenticatedReceiveRoute: AuthenticatedReceiveRoute,
+  AuthenticatedVouchersRoute: AuthenticatedVouchersRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  IssueRoute: IssueRoute,
-  LedgerRoute: LedgerRoute,
-  ReceiveRoute: ReceiveRoute,
-  VouchersRoute: VouchersRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
