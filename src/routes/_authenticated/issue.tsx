@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { itemsQuery, MAIN_HEADS, voucherNo } from "@/lib/stores";
+import { itemsQuery, mainHeadsQuery, MAIN_HEADS, voucherNo } from "@/lib/stores";
 
 export const Route = createFileRoute("/_authenticated/issue")({
   head: () => ({
@@ -55,7 +55,10 @@ const prettySize = (n: number) =>
 function IssuePage() {
   const qc = useQueryClient();
   const items = useQuery(itemsQuery);
+  const mainHeads = useQuery(mainHeadsQuery);
   const [form, setForm] = useState(empty);
+  const [newMainHead, setNewMainHead] = useState("");
+  const [newItemName, setNewItemName] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -64,6 +67,10 @@ function IssuePage() {
   const headItems = useMemo(
     () => (items.data ?? []).filter((i) => i.main_head === form.main_head),
     [items.data, form.main_head],
+  );
+  const headOptions = useMemo(
+    () => Array.from(new Set([...(mainHeads.data ?? []).map((h) => h.name), ...MAIN_HEADS])),
+    [mainHeads.data],
   );
   const selected = (items.data ?? []).find((i) => i.id === form.item_id);
   const balance = selected
@@ -81,6 +88,63 @@ function IssuePage() {
     });
     setFiles((prev) => [...prev, ...incoming].slice(0, 10));
   };
+
+  const addMainHead = useMutation({
+    mutationFn: async () => {
+      const name = newMainHead.trim();
+      if (!name) throw new Error("Enter a Main Head name");
+      const { data, error } = await supabase
+        .from("main_heads")
+        .insert({ name })
+        .select("name")
+        .single();
+      if (error) {
+        if (error.code === "23505") throw new Error("That Main Head already exists");
+        throw error;
+      }
+      return data.name;
+    },
+    onSuccess: (name) => {
+      setNewMainHead("");
+      set("main_head", name);
+      set("item_id", "");
+      qc.invalidateQueries({ queryKey: ["main-heads"] });
+      toast.success("Main Head added");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const addItem = useMutation({
+    mutationFn: async () => {
+      const name = newItemName.trim();
+      if (!name) throw new Error("Enter an item name");
+      if (headItems.some((item) => item.name.toLowerCase() === name.toLowerCase())) {
+        throw new Error("That item already exists under this Main Head");
+      }
+      const { data, error } = await supabase
+        .from("items")
+        .insert({
+          main_head: form.main_head,
+          sub_head: name,
+          name,
+          unit: "nos",
+          unit_price: 0,
+          available_stock: 0,
+          reorder_level: 5,
+        })
+        .select("*")
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (item) => {
+      setNewItemName("");
+      set("item_id", item.id);
+      qc.invalidateQueries({ queryKey: ["items"] });
+      toast.success("Item added");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
   const save = useMutation({
     mutationFn: async () => {
@@ -157,18 +221,41 @@ function IssuePage() {
       >
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Field label="Main head">
-            <select
-              className="field"
-              value={form.main_head}
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <select
+                className="field min-w-0 flex-1"
+                value={form.main_head}
               onChange={(e) => {
                 set("main_head", e.target.value);
                 set("item_id", "");
               }}
             >
-              {MAIN_HEADS.map((h) => (
+              {headOptions.map((h) => (
                 <option key={h}>{h}</option>
               ))}
-            </select>
+              </select>
+              <input
+                className="field min-w-0 flex-1"
+                value={newMainHead}
+                onChange={(e) => setNewMainHead(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addMainHead.mutate();
+                  }
+                }}
+                placeholder="New Main Head"
+                maxLength={80}
+              />
+              <button
+                type="button"
+                onClick={() => addMainHead.mutate()}
+                disabled={addMainHead.isPending}
+                className="rounded-md border border-line bg-card px-3 text-sm font-semibold disabled:opacity-60"
+              >
+                Add
+              </button>
+            </div>
           </Field>
           <Field label="Item">
             <select
@@ -183,6 +270,31 @@ function IssuePage() {
                 </option>
               ))}
             </select>
+          </Field>
+          <Field label="Add item">
+            <div className="flex gap-2">
+              <input
+                className="field min-w-0 flex-1"
+                value={newItemName}
+                onChange={(e) => setNewItemName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addItem.mutate();
+                  }
+                }}
+                placeholder="New item name"
+                maxLength={100}
+              />
+              <button
+                type="button"
+                onClick={() => addItem.mutate()}
+                disabled={addItem.isPending}
+                className="rounded-md border border-line bg-card px-3 text-sm font-semibold disabled:opacity-60"
+              >
+                Add
+              </button>
+            </div>
           </Field>
           <Field label="Date">
             <input
