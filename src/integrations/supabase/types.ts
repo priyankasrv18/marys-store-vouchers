@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      main_heads: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       issue_attachments: {
         Row: {
           created_at: string
