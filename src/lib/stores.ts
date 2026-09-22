@@ -1,5 +1,23 @@
 import { supabase } from "@/integrations/supabase/client";
 
+export type MainHead = {
+  id: string;
+  name: string;
+  created_at: string;
+};
+
+export const mainHeadsQuery = {
+  queryKey: ["main-heads"],
+  queryFn: async (): Promise<MainHead[]> => {
+    const { data, error } = await supabase
+      .from("main_heads")
+      .select("id, name, created_at")
+      .order("created_at");
+    if (error) throw error;
+    return (data ?? []) as MainHead[];
+  },
+};
+
 export const MAIN_HEADS = [
   "Plumbing",
   "Electrical",
