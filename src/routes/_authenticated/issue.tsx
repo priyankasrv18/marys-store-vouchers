@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { itemsQuery, MAIN_HEADS, voucherNo } from "@/lib/stores";
@@ -12,12 +12,12 @@ export const Route = createFileRoute("/_authenticated/issue")({
       {
         name: "description",
         content:
-          "Issue stock to departments and blocks with balance stock, issued by and authorised by details.",
+          "Issue stock to departments and blocks with balance stock, issued by and authorised by details, and attached indent slips.",
       },
       { property: "og:title", content: "Issue Material | St. Mary's Stores" },
       {
         property: "og:description",
-        content: "Issue stock to departments and blocks and track balance stock.",
+        content: "Issue stock to departments and attach signed slips or photos.",
       },
     ],
   }),
@@ -47,10 +47,18 @@ const empty = {
   authorised_by: "",
 };
 
+const MAX_SIZE = 20 * 1024 * 1024;
+
+const prettySize = (n: number) =>
+  n > 1024 * 1024 ? `${(n / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(n / 1024))} KB`;
+
 function IssuePage() {
   const qc = useQueryClient();
   const items = useQuery(itemsQuery);
   const [form, setForm] = useState(empty);
+  const [files, setFiles] = useState<File[]>([]);
+  const [dragging, setDragging] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
   const set = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
   const headItems = useMemo(
@@ -62,6 +70,18 @@ function IssuePage() {
     ? selected.available_stock - (Number(form.qty_issued) || 0)
     : null;
 
+  const addFiles = (list: FileList | null) => {
+    if (!list) return;
+    const incoming = Array.from(list).filter((f) => {
+      if (f.size > MAX_SIZE) {
+        toast.error(`${f.name} is larger than 20 MB`);
+        return false;
+      }
+      return true;
+    });
+    setFiles((prev) => [...prev, ...incoming].slice(0, 10));
+  };
+
   const save = useMutation({
     mutationFn: async () => {
       if (!form.item_id) throw new Error("Select an item to issue");
@@ -71,22 +91,50 @@ function IssuePage() {
       if (selected && qty > selected.available_stock)
         throw new Error(`Only ${selected.available_stock} ${selected.unit} available`);
 
-      const { error } = await supabase.from("issues").insert({
-        voucher_no: voucherNo("IV"),
-        item_id: form.item_id,
-        issue_date: form.issue_date,
-        issued_to: form.issued_to.trim(),
-        department: form.department || null,
-        using_area: form.using_area || null,
-        qty_issued: qty,
-        issued_by: form.issued_by || null,
-        authorised_by: form.authorised_by || null,
-      });
+      const { data: auth } = await supabase.auth.getUser();
+      const userId = auth.user?.id;
+      if (!userId) throw new Error("Your session expired — please sign in again");
+
+      const { data: issue, error } = await supabase
+        .from("issues")
+        .insert({
+          voucher_no: voucherNo("IV"),
+          item_id: form.item_id,
+          issue_date: form.issue_date,
+          issued_to: form.issued_to.trim(),
+          department: form.department || null,
+          using_area: form.using_area || null,
+          qty_issued: qty,
+          issued_by: form.issued_by || null,
+          authorised_by: form.authorised_by || null,
+          created_by: userId,
+        })
+        .select("id")
+        .single();
       if (error) throw error;
+
+      for (const file of files) {
+        const safe = file.name.replace(/[^\w.\-]+/g, "_");
+        const path = `${userId}/${issue.id}/${Date.now()}-${safe}`;
+        const { error: upErr } = await supabase.storage
+          .from("issue-attachments")
+          .upload(path, file, { contentType: file.type || undefined });
+        if (upErr) throw new Error(`Upload failed for ${file.name}: ${upErr.message}`);
+        const { error: rowErr } = await supabase.from("issue_attachments").insert({
+          issue_id: issue.id,
+          file_path: path,
+          file_name: file.name,
+          mime_type: file.type || null,
+          file_size: file.size,
+          uploaded_by: userId,
+        });
+        if (rowErr) throw rowErr;
+      }
     },
     onSuccess: () => {
       toast.success("Issue voucher saved and stock reduced");
       setForm({ ...empty });
+      setFiles([]);
       qc.invalidateQueries({ queryKey: ["items"] });
       qc.invalidateQueries({ queryKey: ["issues"] });
     },
@@ -203,6 +251,70 @@ function IssuePage() {
               maxLength={80}
             />
           </Field>
+        </div>
+
+        <div className="mt-6">
+          <p className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+            Attachments — indent slip, signed note or photo
+          </p>
+          <div
+            onDragOver={(e) => {
+              e.preventDefault();
+              setDragging(true);
+            }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setDragging(false);
+              addFiles(e.dataTransfer.files);
+            }}
+            onClick={() => inputRef.current?.click()}
+            className={
+              "mt-2 cursor-pointer rounded-md border-2 border-dashed px-4 py-8 text-center transition-colors " +
+              (dragging ? "border-primary bg-primary/8" : "border-line bg-secondary/50")
+            }
+          >
+            <p className="text-sm font-semibold">Drag files here or click to browse</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Images and PDFs, up to 20 MB each, maximum 10 files
+            </p>
+            <input
+              ref={inputRef}
+              type="file"
+              multiple
+              accept="image/*,application/pdf"
+              className="hidden"
+              onChange={(e) => {
+                addFiles(e.target.files);
+                e.target.value = "";
+              }}
+            />
+          </div>
+
+          {files.length > 0 && (
+            <ul className="mt-3 divide-y divide-line rounded-md border border-line">
+              {files.map((f, idx) => (
+                <li
+                  key={`${f.name}-${idx}`}
+                  className="flex items-center justify-between gap-3 px-3 py-2 text-sm"
+                >
+                  <span className="truncate">{f.name}</span>
+                  <span className="flex items-center gap-3">
+                    <span className="num text-xs text-muted-foreground">
+                      {prettySize(f.size)}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setFiles((p) => p.filter((_, i) => i !== idx))}
+                      className="text-xs font-semibold text-warn"
+                    >
+                      Remove
+                    </button>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         <div className="mt-5 flex justify-end border-t border-line pt-4">
