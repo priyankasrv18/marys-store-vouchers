@@ -113,7 +113,7 @@ function IssuePage() {
 
       for (const file of files) {
         const safe = file.name.replace(/[^\w.\-]+/g, "_");
-        const path = `${userId}/${issue.id}/${Date.now()}-${safe}`;
+        const path = `${attachmentOwner}/${issue.id}/${Date.now()}-${safe}`;
         const { error: upErr } = await supabase.storage
           .from("issue-attachments")
           .upload(path, file, { contentType: file.type || undefined });
