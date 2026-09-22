@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { itemsQuery, receiptsQuery, issuesQuery, rupees } from "@/lib/stores";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
     meta: [
       { title: "Stores Dashboard | St. Mary's Guntur" },

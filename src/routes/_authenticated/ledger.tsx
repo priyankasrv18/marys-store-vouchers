@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Fragment, useState } from "react";
 import { itemsQuery, MAIN_HEADS, rupees, type Item } from "@/lib/stores";
 
-export const Route = createFileRoute("/ledger")({
+export const Route = createFileRoute("/_authenticated/ledger")({
   head: () => ({
     meta: [
       { title: "Stock Ledger | St. Mary's Stores" },

@@ -14,11 +14,53 @@ export type Database = {
   }
   public: {
     Tables: {
+      issue_attachments: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_path: string
+          file_size: number | null
+          id: string
+          issue_id: string
+          mime_type: string | null
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_path: string
+          file_size?: number | null
+          id?: string
+          issue_id: string
+          mime_type?: string | null
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_path?: string
+          file_size?: number | null
+          id?: string
+          issue_id?: string
+          mime_type?: string | null
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "issue_attachments_issue_id_fkey"
+            columns: ["issue_id"]
+            isOneToOne: false
+            referencedRelation: "issues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       issues: {
         Row: {
           authorised_by: string | null
           balance_stock: number
           created_at: string
+          created_by: string | null
           department: string | null
           id: string
           issue_date: string
@@ -33,6 +75,7 @@ export type Database = {
           authorised_by?: string | null
           balance_stock?: number
           created_at?: string
+          created_by?: string | null
           department?: string | null
           id?: string
           issue_date?: string
@@ -47,6 +90,7 @@ export type Database = {
           authorised_by?: string | null
           balance_stock?: number
           created_at?: string
+          created_by?: string | null
           department?: string | null
           id?: string
           issue_date?: string
@@ -103,11 +147,36 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          created_at: string
+          department: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          department?: string | null
+          email?: string | null
+          full_name?: string | null
+          id: string
+        }
+        Update: {
+          created_at?: string
+          department?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
       receipts: {
         Row: {
           approved_by: string | null
           bill_no: string | null
           created_at: string
+          created_by: string | null
           expiry_date: string | null
           id: string
           item_id: string
@@ -125,6 +194,7 @@ export type Database = {
           approved_by?: string | null
           bill_no?: string | null
           created_at?: string
+          created_by?: string | null
           expiry_date?: string | null
           id?: string
           item_id: string
@@ -142,6 +212,7 @@ export type Database = {
           approved_by?: string | null
           bill_no?: string | null
           created_at?: string
+          created_by?: string | null
           expiry_date?: string | null
           id?: string
           item_id?: string
@@ -165,15 +236,42 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "staff"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -300,6 +398,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "staff"],
+    },
   },
 } as const
