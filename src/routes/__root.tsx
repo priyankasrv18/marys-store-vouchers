@@ -160,6 +160,7 @@ function AppShell() {
     : "St. Mary's Group of Institutions for Women";
 
   return (
+    <>
       <div className="flex min-h-screen bg-background text-foreground">
         <aside className="hidden w-64 shrink-0 flex-col bg-sidebar px-4 py-6 text-sidebar-foreground md:flex">
           <div className="px-2">
@@ -238,5 +239,6 @@ function AppShell() {
         </div>
       </div>
       <Toaster />
+    </>
   );
 }
