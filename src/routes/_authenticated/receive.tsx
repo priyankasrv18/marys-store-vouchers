@@ -3,7 +3,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { itemsQuery, MAIN_HEADS, rupees, voucherNo } from "@/lib/stores";
+import { itemsQuery, mainHeadsQuery, MAIN_HEADS, rupees, voucherNo } from "@/lib/stores";
+import { useProfile } from "@/lib/auth";
 
 export const Route = createFileRoute("/_authenticated/receive")({
   head: () => ({
@@ -55,8 +56,11 @@ const empty = {
 
 function ReceivePage() {
   const qc = useQueryClient();
+  const me = useProfile();
   const items = useQuery(itemsQuery);
+  const mainHeads = useQuery(mainHeadsQuery);
   const [form, setForm] = useState(empty);
+  const [newMainHead, setNewMainHead] = useState("");
   const set = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
   const headItems = useMemo(
@@ -64,10 +68,41 @@ function ReceivePage() {
     [items.data, form.main_head],
   );
 
+  const headOptions = useMemo(
+    () => Array.from(new Set([...(mainHeads.data ?? []).map((h) => h.name), ...MAIN_HEADS])),
+    [mainHeads.data],
+  );
+
+  const addMainHead = useMutation({
+    mutationFn: async () => {
+      const name = newMainHead.trim();
+      if (!name) throw new Error("Enter a Main Head name");
+      const { data, error } = await supabase
+        .from("main_heads")
+        .insert({ name })
+        .select("name")
+        .single();
+      if (error) {
+        if (error.code === "23505") throw new Error("That Main Head already exists");
+        throw error;
+      }
+      return data.name;
+    },
+    onSuccess: (name) => {
+      setNewMainHead("");
+      set("main_head", name);
+      set("item_id", "");
+      qc.invalidateQueries({ queryKey: ["main-heads"] });
+      toast.success("Main Head added");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   const total = (Number(form.unit_price) || 0) * (Number(form.quantity) || 0);
 
   const save = useMutation({
     mutationFn: async () => {
+      if (!me.data?.user) throw new Error("You must be signed in");
       let itemId = form.item_id;
       if (!itemId) {
         if (!form.newItemName.trim()) throw new Error("Choose an item or enter a new item name");
@@ -80,6 +115,7 @@ function ReceivePage() {
             unit: form.newUnit.trim() || "nos",
             unit_price: Number(form.unit_price) || 0,
             available_stock: 0,
+            created_by: me.data.user.id,
           })
           .select("id")
           .single();
@@ -103,6 +139,7 @@ function ReceivePage() {
         quantity: Number(form.quantity),
         total_amount: total,
         approved_by: form.approved_by || null,
+        created_by: me.data.user.id,
       });
       if (error) throw error;
     },
@@ -133,18 +170,41 @@ function ReceivePage() {
       >
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Field label="Main head">
-            <select
-              className="field"
-              value={form.main_head}
-              onChange={(e) => {
-                set("main_head", e.target.value);
-                set("item_id", "");
-              }}
-            >
-              {MAIN_HEADS.map((h) => (
-                <option key={h}>{h}</option>
-              ))}
-            </select>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <select
+                className="field min-w-0 flex-1"
+                value={form.main_head}
+                onChange={(e) => {
+                  set("main_head", e.target.value);
+                  set("item_id", "");
+                }}
+              >
+                {headOptions.map((h) => (
+                  <option key={h}>{h}</option>
+                ))}
+              </select>
+              <input
+                className="field min-w-0 flex-1"
+                value={newMainHead}
+                onChange={(e) => setNewMainHead(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addMainHead.mutate();
+                  }
+                }}
+                placeholder="New Main Head"
+                maxLength={80}
+              />
+              <button
+                type="button"
+                onClick={() => addMainHead.mutate()}
+                disabled={addMainHead.isPending}
+                className="rounded-md border border-line bg-card px-3 text-sm font-semibold disabled:opacity-60"
+              >
+                Add
+              </button>
+            </div>
           </Field>
           <Field label="Item">
             <select
