@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { COLLEGES, type CollegeId, useUser } from "@/lib/auth";
@@ -32,7 +32,7 @@ function AuthPage() {
 
   const college = selectedCollege ? COLLEGES[selectedCollege] : null;
 
-  const signIn = async (event: React.FormEvent) => {
+  const signIn = async (event: FormEvent) => {
     event.preventDefault();
     if (!selectedCollege) return;
     if (!identifier.trim() || !password) {
