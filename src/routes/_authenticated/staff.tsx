@@ -90,6 +90,19 @@ function StaffPage() {
         </p>
       </header>
 
+      <div className="grid gap-3 md:grid-cols-3">
+        {[
+          { title: "Admin1 · SMGG", text: "Full stores access for the Guntur portal." },
+          { title: "Admin1 · STMW", text: "Full stores access for the Budampadu portal." },
+          { title: "User", text: "Own dashboard, stock search, item creation, receives and reports." },
+        ].map((card) => (
+          <div key={card.title} className="panel p-4">
+            <p className="text-sm font-semibold">{card.title}</p>
+            <p className="mt-1 text-xs leading-5 text-muted-foreground">{card.text}</p>
+          </div>
+        ))}
+      </div>
+
       <div className="panel overflow-x-auto">
         <table className="w-full min-w-[640px] text-sm">
           <thead className="bg-secondary text-left text-[11px] uppercase tracking-[0.1em] text-muted-foreground">
