@@ -132,6 +132,7 @@ export type Database = {
       items: {
         Row: {
           available_stock: number
+          created_by: string | null
           created_at: string
           id: string
           main_head: string
@@ -143,6 +144,7 @@ export type Database = {
         }
         Insert: {
           available_stock?: number
+          created_by?: string | null
           created_at?: string
           id?: string
           main_head: string
@@ -154,6 +156,7 @@ export type Database = {
         }
         Update: {
           available_stock?: number
+          created_by?: string | null
           created_at?: string
           id?: string
           main_head?: string
@@ -167,6 +170,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          college: string | null
           created_at: string
           department: string | null
           email: string | null
@@ -174,6 +178,7 @@ export type Database = {
           id: string
         }
         Insert: {
+          college?: string | null
           created_at?: string
           department?: string | null
           email?: string | null
@@ -181,6 +186,7 @@ export type Database = {
           id: string
         }
         Update: {
+          college?: string | null
           created_at?: string
           department?: string | null
           email?: string | null
