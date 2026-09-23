@@ -6,12 +6,15 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  useLocation,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { roleLabel, useProfile } from "@/lib/auth";
 
 function NotFoundComponent() {
   return (
@@ -121,9 +124,10 @@ function RootShell({ children }: { children: ReactNode }) {
 const NAV = [
   { to: "/", label: "Dashboard" },
   { to: "/receive", label: "Receive Material" },
-  { to: "/issue", label: "Issue Material" },
+  { to: "/issue", label: "Issue Material", adminOnly: true },
   { to: "/ledger", label: "Stock Ledger" },
   { to: "/vouchers", label: "Vouchers" },
+  { to: "/staff", label: "User Management", adminOnly: true },
 ] as const;
 
 function RootComponent() {
@@ -131,6 +135,31 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <AppShell />
+    </QueryClientProvider>
+  );
+}
+
+function AppShell() {
+  const location = useLocation();
+  const profile = useProfile();
+  const isAdmin = profile.data?.isAdmin ?? false;
+  const nav = NAV.filter((n) => !n.adminOnly || isAdmin);
+
+  if (location.pathname === "/auth") {
+    return (
+      <>
+        <Outlet />
+        <Toaster />
+      </>
+    );
+  }
+
+  const collegeName = profile.data?.college === "stmw"
+    ? "St. Mary's Women's Engineering College"
+    : "St. Mary's Group of Institutions for Women";
+
+  return (
       <div className="flex min-h-screen bg-background text-foreground">
         <aside className="hidden w-64 shrink-0 flex-col bg-sidebar px-4 py-6 text-sidebar-foreground md:flex">
           <div className="px-2">
@@ -143,7 +172,7 @@ function RootComponent() {
             </p>
           </div>
           <nav className="mt-8 flex flex-col gap-1">
-            {NAV.map((n) => (
+            {nav.map((n) => (
               <Link
                 key={n.to}
                 to={n.to}
@@ -168,7 +197,7 @@ function RootComponent() {
 
         <div className="min-w-0 flex-1">
           <div className="flex gap-1 overflow-x-auto border-b border-line bg-sidebar px-3 py-2 text-sidebar-foreground md:hidden">
-            {NAV.map((n) => (
+            {nav.map((n) => (
               <Link
                 key={n.to}
                 to={n.to}
@@ -185,12 +214,29 @@ function RootComponent() {
               </Link>
             ))}
           </div>
+          <header className="flex items-center justify-between gap-3 border-b border-line px-4 py-3 md:px-8">
+            <div>
+              <p className="text-sm font-semibold">{collegeName}</p>
+              <p className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+                {roleLabel(isAdmin)} · Stores portal
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={async () => {
+                await supabase.auth.signOut();
+                window.location.href = "/auth";
+              }}
+              className="rounded-md border border-line bg-card px-3 py-1.5 text-xs font-semibold"
+            >
+              Sign out
+            </button>
+          </header>
           <main className="mx-auto max-w-6xl px-4 py-6 md:px-8">
             <Outlet />
           </main>
         </div>
       </div>
       <Toaster />
-    </QueryClientProvider>
   );
 }
