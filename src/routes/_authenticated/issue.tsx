@@ -118,6 +118,7 @@ function IssuePage() {
 
   const addItem = useMutation({
     mutationFn: async () => {
+      if (!me.data?.user) throw new Error("You must be signed in");
       const name = newItemName.trim();
       if (!name) throw new Error("Enter an item name");
       if (headItems.some((item) => item.name.toLowerCase() === name.toLowerCase())) {
@@ -133,6 +134,7 @@ function IssuePage() {
           unit_price: 0,
           available_stock: 0,
           reorder_level: 5,
+          created_by: me.data.user.id,
         })
         .select("*")
         .single();
