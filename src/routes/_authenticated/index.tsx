@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { itemsQuery, receiptsQuery, issuesQuery, rupees } from "@/lib/stores";
+import { useProfile } from "@/lib/auth";
 
 export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
@@ -32,11 +33,14 @@ function Stat({ label, value, note }: { label: string; value: string; note: stri
 }
 
 function Dashboard() {
+  const me = useProfile();
   const items = useQuery(itemsQuery);
   const receipts = useQuery(receiptsQuery);
   const issues = useQuery(issuesQuery);
 
-  const list = items.data ?? [];
+  const list = (items.data ?? []).filter(
+    (item) => me.data?.isAdmin || item.created_by === me.data?.user.id,
+  );
   const totalValue = list.reduce((s, i) => s + i.available_stock * i.unit_price, 0);
   const low = list.filter((i) => i.available_stock <= i.reorder_level);
   const nameOf = (id: string) => list.find((i) => i.id === id)?.name ?? "Item";
