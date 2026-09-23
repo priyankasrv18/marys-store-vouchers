@@ -29,6 +29,7 @@ export const MAIN_HEADS = [
 
 export type Item = {
   id: string;
+  created_by: string | null;
   main_head: string;
   sub_head: string;
   name: string;
@@ -40,6 +41,7 @@ export type Item = {
 
 export type Receipt = {
   id: string;
+  created_by: string | null;
   voucher_no: string;
   item_id: string;
   vendor_name: string;
@@ -58,6 +60,7 @@ export type Receipt = {
 
 export type Issue = {
   id: string;
+  created_by: string | null;
   voucher_no: string;
   item_id: string;
   issue_date: string;
