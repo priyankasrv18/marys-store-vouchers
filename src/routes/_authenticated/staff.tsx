@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useProfile, type AppRole } from "@/lib/auth";
+import { COLLEGES, useProfile, type AppRole } from "@/lib/auth";
 
 export const Route = createFileRoute("/_authenticated/staff")({
   head: () => ({
@@ -97,7 +97,8 @@ function StaffPage() {
               <th className="px-3 py-2 font-medium">Name</th>
               <th className="px-3 py-2 font-medium">Email</th>
               <th className="px-3 py-2 font-medium">Department</th>
-              <th className="px-3 py-2 font-medium">Role</th>
+              <th className="px-3 py-2 font-medium">College</th>
+              <th className="px-3 py-2 font-medium">Access</th>
               <th className="px-3 py-2 font-medium">Change</th>
             </tr>
           </thead>
@@ -117,7 +118,7 @@ function StaffPage() {
                           : "rounded-md bg-secondary px-2 py-0.5 text-[11px] font-semibold text-muted-foreground"
                       }
                     >
-                      {isAdmin ? "Admin" : "Staff"}
+                      {isAdmin ? "Admin1" : "User"}
                     </span>
                   </td>
                   <td className="px-3 py-2">
@@ -143,7 +144,7 @@ function StaffPage() {
             })}
             {(staff.data ?? []).length === 0 && (
               <tr>
-                <td colSpan={5} className="px-3 py-6 text-center text-muted-foreground">
+                <td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">
                   No staff accounts yet.
                 </td>
               </tr>
