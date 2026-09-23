@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Fragment, useState } from "react";
+import { useMemo, useState } from "react";
+import { Fragment } from "react";
 import { downloadStockLedgerExcel } from "@/lib/excel";
-import { itemsQuery, issuesQuery, MAIN_HEADS, receiptsQuery, rupees, type Item } from "@/lib/stores";
+import { itemsQuery, issuesQuery, mainHeadsQuery, MAIN_HEADS, receiptsQuery, rupees, type Item } from "@/lib/stores";
 
 export const Route = createFileRoute("/_authenticated/ledger")({
   head: () => ({
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/_authenticated/ledger")({
 
 function LedgerPage() {
   const items = useQuery(itemsQuery);
+  const mainHeads = useQuery(mainHeadsQuery);
   const receipts = useQuery(receiptsQuery);
   const issues = useQuery(issuesQuery);
   const [search, setSearch] = useState("");
@@ -33,7 +35,11 @@ function LedgerPage() {
     (i.name + i.sub_head + i.main_head).toLowerCase().includes(search.toLowerCase()),
   );
 
-  const grouped = MAIN_HEADS.map((head) => ({
+  const headOptions = useMemo(
+    () => Array.from(new Set([...(mainHeads.data ?? []).map((h) => h.name), ...MAIN_HEADS])),
+    [mainHeads.data],
+  );
+  const grouped = headOptions.map((head) => ({
     head,
     rows: all.filter((i) => i.main_head === head),
   })).filter((g) => g.rows.length > 0);
