@@ -121,14 +121,14 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
-const NAV = [
+const NAV: { to: "/" | "/receive" | "/issue" | "/ledger" | "/vouchers" | "/staff"; label: string; adminOnly?: boolean }[] = [
   { to: "/", label: "Dashboard" },
   { to: "/receive", label: "Receive Material" },
   { to: "/issue", label: "Issue Material", adminOnly: true },
   { to: "/ledger", label: "Stock Ledger" },
   { to: "/vouchers", label: "Vouchers" },
-  { to: "/staff", label: "User Management", adminOnly: true },
-] as const;
+  { to: "/staff", label: "User Management" },
+];
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
