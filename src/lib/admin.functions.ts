@@ -17,7 +17,7 @@ async function myAdminCollege(supabase: any, userId: string) {
 export const setUserPassword = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) =>
-    z.object({ userId: z.string().uuid(), password: z.string().min(6).max(72).optional() }).parse(d),
+    z.object({ userId: z.string().uuid(), password: z.string().max(72).optional() }).parse(d),
   )
   .handler(async ({ data, context }) => {
     const college = await myAdminCollege(context.supabase, context.userId);

@@ -24,7 +24,7 @@ function OwnPassword() {
   const [pending, setPending] = useState(false);
   const submit = async (e: FormEvent) => {
     e.preventDefault();
-    if (pw.length < 6) return toast.error("Password must be at least 6 characters");
+    if (pw.length < 6) { toast.error("Password must be at least 6 characters"); return; }
     setPending(true);
     const { error } = await supabase.auth.updateUser({ password: pw });
     setPending(false);
@@ -170,7 +170,7 @@ function StaffPage() {
                           onClick={() => {
                             const pw = window.prompt(`New password for ${p.full_name || p.email} (leave blank for ${DEFAULT_PASSWORD})`);
                             if (pw === null) return;
-                            changePw.mutate({ userId: p.id, password: pw.trim() || undefined });
+                            changePw.mutate({ userId: p.id, password: pw.trim() });
                           }}
                           className="rounded-md border border-line bg-card px-3 py-1.5 text-xs font-semibold"
                         >
