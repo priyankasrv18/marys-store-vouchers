@@ -185,7 +185,7 @@ function IssuePage() {
         const path = `${attachmentOwner}/${issue.id}/${Date.now()}-${safe}`;
         const { error: upErr } = await supabase.storage
           .from("issue-attachments")
-          .upload(path, file, { contentType: file.type || undefined });
+          .upload(path, file, { contentType: file.type || "application/octet-stream" });
         if (upErr) throw new Error(`Upload failed for ${file.name}: ${upErr.message}`);
         const { error: rowErr } = await supabase.from("issue_attachments").insert({
           issue_id: issue.id,

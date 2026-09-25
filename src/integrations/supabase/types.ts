@@ -14,24 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      main_heads: {
-        Row: {
-          created_at: string
-          id: string
-          name: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          name: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          name?: string
-        }
-        Relationships: []
-      }
       issue_attachments: {
         Row: {
           created_at: string
@@ -132,8 +114,8 @@ export type Database = {
       items: {
         Row: {
           available_stock: number
-          created_by: string | null
           created_at: string
+          created_by: string | null
           id: string
           main_head: string
           name: string
@@ -144,8 +126,8 @@ export type Database = {
         }
         Insert: {
           available_stock?: number
-          created_by?: string | null
           created_at?: string
+          created_by?: string | null
           id?: string
           main_head: string
           name: string
@@ -156,8 +138,8 @@ export type Database = {
         }
         Update: {
           available_stock?: number
-          created_by?: string | null
           created_at?: string
+          created_by?: string | null
           id?: string
           main_head?: string
           name?: string
@@ -165,6 +147,24 @@ export type Database = {
           sub_head?: string
           unit?: string
           unit_price?: number
+        }
+        Relationships: []
+      }
+      main_heads: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
         }
         Relationships: []
       }

@@ -40,8 +40,9 @@ function AuthPage() {
       return;
     }
     setPending(true);
+    const id = identifier.trim().toLowerCase();
     const { data, error } = await supabase.auth.signInWithPassword({
-      email: identifier.trim(),
+      email: id.includes("@") ? id : `${id.replace(/[^a-z0-9._-]/g, "")}.${selectedCollege}@stmarys.local`,
       password,
     });
     if (error || !data.user) {
