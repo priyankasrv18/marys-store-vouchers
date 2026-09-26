@@ -3,7 +3,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useProfile } from "@/lib/auth";
 import { itemsQuery, mainHeadsQuery, MAIN_HEADS, voucherNo } from "@/lib/stores";
 
 export const Route = createFileRoute("/_authenticated/issue")({
@@ -55,7 +54,6 @@ const prettySize = (n: number) =>
 
 function IssuePage() {
   const qc = useQueryClient();
-  const me = useProfile();
   const items = useQuery(itemsQuery);
   const mainHeads = useQuery(mainHeadsQuery);
   const [form, setForm] = useState(empty);
@@ -118,7 +116,6 @@ function IssuePage() {
 
   const addItem = useMutation({
     mutationFn: async () => {
-      if (!me.data?.user) throw new Error("You must be signed in");
       const name = newItemName.trim();
       if (!name) throw new Error("Enter an item name");
       if (headItems.some((item) => item.name.toLowerCase() === name.toLowerCase())) {
@@ -134,7 +131,6 @@ function IssuePage() {
           unit_price: 0,
           available_stock: 0,
           reorder_level: 5,
-          created_by: me.data.user.id,
         })
         .select("*")
         .single();
@@ -160,7 +156,7 @@ function IssuePage() {
         throw new Error(`Only ${selected.available_stock} ${selected.unit} available`);
 
       if (!me.data?.user) throw new Error("You must be signed in");
-      const attachmentOwner = me.data.user.id;
+      const attachmentOwner = "public";
 
       const { data: issue, error } = await supabase
         .from("issues")
@@ -174,7 +170,6 @@ function IssuePage() {
           qty_issued: qty,
           issued_by: form.issued_by || null,
           authorised_by: form.authorised_by || null,
-          created_by: me.data.user.id,
         })
         .select("id")
         .single();
@@ -208,20 +203,6 @@ function IssuePage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  if (me.isLoading) {
-    return <p className="text-sm text-muted-foreground">Loading…</p>;
-  }
-
-  if (!me.data?.isAdmin) {
-    return (
-      <div className="panel p-6">
-        <h1 className="text-lg font-semibold">Administrators only</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Issue Material is available to Admin1 accounts only.
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
