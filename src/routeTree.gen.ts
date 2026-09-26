@@ -15,7 +15,6 @@ import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedIssueRouteImport } from './routes/_authenticated/issue'
 import { Route as AuthenticatedLedgerRouteImport } from './routes/_authenticated/ledger'
 import { Route as AuthenticatedReceiveRouteImport } from './routes/_authenticated/receive'
-import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
 import { Route as AuthenticatedVouchersRouteImport } from './routes/_authenticated/vouchers'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -47,11 +46,6 @@ const AuthenticatedReceiveRoute = AuthenticatedReceiveRouteImport.update({
   path: '/receive',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedStaffRoute = AuthenticatedStaffRouteImport.update({
-  id: '/staff',
-  path: '/staff',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedVouchersRoute = AuthenticatedVouchersRouteImport.update({
   id: '/vouchers',
   path: '/vouchers',
@@ -64,7 +58,6 @@ export interface FileRoutesByFullPath {
   '/issue': typeof AuthenticatedIssueRoute
   '/ledger': typeof AuthenticatedLedgerRoute
   '/receive': typeof AuthenticatedReceiveRoute
-  '/staff': typeof AuthenticatedStaffRoute
   '/vouchers': typeof AuthenticatedVouchersRoute
 }
 export interface FileRoutesByTo {
@@ -72,7 +65,6 @@ export interface FileRoutesByTo {
   '/issue': typeof AuthenticatedIssueRoute
   '/ledger': typeof AuthenticatedLedgerRoute
   '/receive': typeof AuthenticatedReceiveRoute
-  '/staff': typeof AuthenticatedStaffRoute
   '/vouchers': typeof AuthenticatedVouchersRoute
   '/': typeof AuthenticatedIndexRoute
 }
@@ -83,16 +75,13 @@ export interface FileRoutesById {
   '/_authenticated/issue': typeof AuthenticatedIssueRoute
   '/_authenticated/ledger': typeof AuthenticatedLedgerRoute
   '/_authenticated/receive': typeof AuthenticatedReceiveRoute
-  '/_authenticated/staff': typeof AuthenticatedStaffRoute
   '/_authenticated/vouchers': typeof AuthenticatedVouchersRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/auth' | '/issue' | '/ledger' | '/receive' | '/staff' | '/vouchers'
   fileRoutesByTo: FileRoutesByTo
-  to: '/auth' | '/issue' | '/ledger' | '/receive' | '/staff' | '/vouchers' | '/'
   id:
     | '__root__'
     | '/_authenticated'
@@ -100,7 +89,6 @@ export interface FileRouteTypes {
     | '/_authenticated/issue'
     | '/_authenticated/ledger'
     | '/_authenticated/receive'
-    | '/_authenticated/staff'
     | '/_authenticated/vouchers'
     | '/_authenticated/'
   fileRoutesById: FileRoutesById
@@ -154,13 +142,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReceiveRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/staff': {
-      id: '/_authenticated/staff'
-      path: '/staff'
-      fullPath: '/staff'
-      preLoaderRoute: typeof AuthenticatedStaffRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/vouchers': {
       id: '/_authenticated/vouchers'
       path: '/vouchers'
@@ -175,7 +156,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedIssueRoute: typeof AuthenticatedIssueRoute
   AuthenticatedLedgerRoute: typeof AuthenticatedLedgerRoute
   AuthenticatedReceiveRoute: typeof AuthenticatedReceiveRoute
-  AuthenticatedStaffRoute: typeof AuthenticatedStaffRoute
   AuthenticatedVouchersRoute: typeof AuthenticatedVouchersRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
@@ -184,7 +164,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedIssueRoute: AuthenticatedIssueRoute,
   AuthenticatedLedgerRoute: AuthenticatedLedgerRoute,
   AuthenticatedReceiveRoute: AuthenticatedReceiveRoute,
-  AuthenticatedStaffRoute: AuthenticatedStaffRoute,
   AuthenticatedVouchersRoute: AuthenticatedVouchersRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
