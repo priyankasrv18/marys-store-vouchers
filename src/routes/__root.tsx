@@ -6,15 +6,12 @@ import {
   useRouter,
   HeadContent,
   Scripts,
-  useLocation,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { roleLabel, useProfile } from "@/lib/auth";
 
 function NotFoundComponent() {
   return (
@@ -121,13 +118,12 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
-const NAV: { to: "/" | "/receive" | "/issue" | "/ledger" | "/vouchers" | "/staff"; label: string; adminOnly?: boolean }[] = [
+const NAV: { to: "/" | "/receive" | "/issue" | "/ledger" | "/vouchers"; label: string }[] = [
   { to: "/", label: "Dashboard" },
   { to: "/receive", label: "Receive Material" },
-  { to: "/issue", label: "Issue Material", adminOnly: true },
+  { to: "/issue", label: "Issue Material" },
   { to: "/ledger", label: "Stock Ledger" },
   { to: "/vouchers", label: "Vouchers" },
-  { to: "/staff", label: "User Management" },
 ];
 
 function RootComponent() {
@@ -141,23 +137,8 @@ function RootComponent() {
 }
 
 function AppShell() {
-  const location = useLocation();
-  const profile = useProfile();
-  const isAdmin = profile.data?.isAdmin ?? false;
-  const nav = NAV.filter((n) => !n.adminOnly || isAdmin);
-
-  if (location.pathname === "/auth") {
-    return (
-      <>
-        <Outlet />
-        <Toaster />
-      </>
-    );
-  }
-
-  const collegeName = profile.data?.college === "stmw"
-    ? "St. Mary's Women's Engineering College"
-    : "St. Mary's Group of Institutions for Women";
+  const nav = NAV;
+  const collegeName = "St. Mary's Group of Institutions for Women";
 
   return (
     <>
@@ -215,23 +196,13 @@ function AppShell() {
               </Link>
             ))}
           </div>
-          <header className="flex items-center justify-between gap-3 border-b border-line px-4 py-3 md:px-8">
+          <header className="flex items-center gap-3 border-b border-line px-4 py-3 md:px-8">
             <div>
               <p className="text-sm font-semibold">{collegeName}</p>
               <p className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
-                {roleLabel(isAdmin)} · Stores portal
+                Stores portal
               </p>
             </div>
-            <button
-              type="button"
-              onClick={async () => {
-                await supabase.auth.signOut();
-                window.location.href = "/auth";
-              }}
-              className="rounded-md border border-line bg-card px-3 py-1.5 text-xs font-semibold"
-            >
-              Sign out
-            </button>
           </header>
           <main className="mx-auto max-w-6xl px-4 py-6 md:px-8">
             <Outlet />
