@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { itemsQuery, mainHeadsQuery, MAIN_HEADS, rupees, voucherNo } from "@/lib/stores";
-import { useProfile } from "@/lib/auth";
 
 export const Route = createFileRoute("/_authenticated/receive")({
   head: () => ({
@@ -56,7 +55,6 @@ const empty = {
 
 function ReceivePage() {
   const qc = useQueryClient();
-  const me = useProfile();
   const items = useQuery(itemsQuery);
   const mainHeads = useQuery(mainHeadsQuery);
   const [form, setForm] = useState(empty);
@@ -102,7 +100,6 @@ function ReceivePage() {
 
   const save = useMutation({
     mutationFn: async () => {
-      if (!me.data?.user) throw new Error("You must be signed in");
       let itemId = form.item_id;
       if (!itemId) {
         if (!form.newItemName.trim()) throw new Error("Choose an item or enter a new item name");
@@ -115,7 +112,6 @@ function ReceivePage() {
             unit: form.newUnit.trim() || "nos",
             unit_price: Number(form.unit_price) || 0,
             available_stock: 0,
-            created_by: me.data.user.id,
           })
           .select("id")
           .single();
@@ -139,7 +135,6 @@ function ReceivePage() {
         quantity: Number(form.quantity),
         total_amount: total,
         approved_by: form.approved_by || null,
-        created_by: me.data.user.id,
       });
       if (error) throw error;
     },
