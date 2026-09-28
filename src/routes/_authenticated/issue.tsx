@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { itemsQuery, mainHeadsQuery, MAIN_HEADS, voucherNo } from "@/lib/stores";
+import { itemsQuery, mainHeadsQuery, MAIN_HEADS, recordNo } from "@/lib/stores";
 
 export const Route = createFileRoute("/_authenticated/issue")({
   head: () => ({
@@ -161,7 +161,7 @@ function IssuePage() {
       const { data: issue, error } = await supabase
         .from("issues")
         .insert({
-          voucher_no: voucherNo("IV"),
+          record_no: recordNo("IV"),
           item_id: form.item_id,
           issue_date: form.issue_date,
           issued_to: form.issued_to.trim(),
@@ -194,7 +194,7 @@ function IssuePage() {
       }
     },
     onSuccess: () => {
-      toast.success("Issue voucher saved and stock reduced");
+      toast.success("Issue record saved and stock reduced");
       setForm({ ...empty });
       setFiles([]);
       qc.invalidateQueries({ queryKey: ["items"] });
@@ -209,7 +209,7 @@ function IssuePage() {
       <header>
         <h1 className="text-2xl font-bold">Issue Material</h1>
         <p className="text-sm text-muted-foreground">
-          Issue voucher — saving deducts the quantity from available stock.
+          Issue record — saving deducts the quantity from available stock.
         </p>
       </header>
 
@@ -434,7 +434,7 @@ function IssuePage() {
             disabled={save.isPending}
             className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-60"
           >
-            {save.isPending ? "Saving…" : "Save issue voucher"}
+            {save.isPending ? "Saving…" : "Save issue record"}
           </button>
         </div>
       </form>
