@@ -42,7 +42,7 @@ export type Item = {
 export type Receipt = {
   id: string;
   created_by: string | null;
-  voucher_no: string;
+  record_no: string;
   item_id: string;
   vendor_name: string;
   vendor_address: string | null;
@@ -61,7 +61,7 @@ export type Receipt = {
 export type Issue = {
   id: string;
   created_by: string | null;
-  voucher_no: string;
+  record_no: string;
   item_id: string;
   issue_date: string;
   issued_to: string;
@@ -114,5 +114,5 @@ export const issuesQuery = {
   },
 };
 
-export const voucherNo = (prefix: string) =>
+export const recordNo = (prefix: string) =>
   `${prefix}-${new Date().getFullYear()}-${String(Date.now()).slice(-5)}`;
