@@ -118,12 +118,13 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
-const NAV: { to: "/" | "/receive" | "/issue" | "/ledger" | "/vouchers"; label: string }[] = [
+const NAV: { to: "/" | "/receive" | "/issue" | "/ledger" | "/excel" | "/users"; label: string }[] = [
   { to: "/", label: "Dashboard" },
   { to: "/receive", label: "Receive Material" },
   { to: "/issue", label: "Issue Material" },
   { to: "/ledger", label: "Stock Ledger" },
-  { to: "/vouchers", label: "Vouchers" },
+  { to: "/excel", label: "Excel Export" },
+  { to: "/users", label: "User Management" },
 ];
 
 function RootComponent() {
@@ -173,7 +174,7 @@ function AppShell() {
             ))}
           </nav>
           <p className="mt-auto px-2 text-[11px] opacity-60">
-            Voucher management &amp; stock control
+            Stock management and records
           </p>
         </aside>
 
