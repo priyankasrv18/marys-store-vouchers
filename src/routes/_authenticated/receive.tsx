@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { itemsQuery, mainHeadsQuery, MAIN_HEADS, rupees, voucherNo } from "@/lib/stores";
+import { itemsQuery, mainHeadsQuery, MAIN_HEADS, rupees, recordNo } from "@/lib/stores";
 
 export const Route = createFileRoute("/_authenticated/receive")({
   head: () => ({
@@ -12,12 +12,12 @@ export const Route = createFileRoute("/_authenticated/receive")({
       {
         name: "description",
         content:
-          "Record purchase vouchers with vendor, bill, dates, rate and quantity; stock updates automatically.",
+          "Record purchase records with vendor, bill, dates, rate and quantity; stock updates automatically.",
       },
       { property: "og:title", content: "Receive Material | St. Mary's Stores" },
       {
         property: "og:description",
-        content: "Record purchase vouchers and update stock automatically.",
+        content: "Record purchase records and update stock automatically.",
       },
     ],
   }),
@@ -122,7 +122,7 @@ function ReceivePage() {
       if (!(Number(form.quantity) > 0)) throw new Error("Quantity must be greater than zero");
 
       const { error } = await supabase.from("receipts").insert({
-        voucher_no: voucherNo("PV"),
+        record_no: recordNo("PV"),
         item_id: itemId,
         vendor_name: form.vendor_name.trim(),
         vendor_address: form.vendor_address || null,
@@ -139,7 +139,7 @@ function ReceivePage() {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Purchase voucher saved and stock updated");
+      toast.success("Purchase record saved and stock updated");
       setForm({ ...empty });
       qc.invalidateQueries({ queryKey: ["items"] });
       qc.invalidateQueries({ queryKey: ["receipts"] });
@@ -152,7 +152,7 @@ function ReceivePage() {
       <header>
         <h1 className="text-2xl font-bold">Receive Material</h1>
         <p className="text-sm text-muted-foreground">
-          Purchase voucher — saving adds the quantity to available stock.
+          Purchase record — saving adds the quantity to available stock.
         </p>
       </header>
 
@@ -343,7 +343,7 @@ function ReceivePage() {
             disabled={save.isPending}
             className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-60"
           >
-            {save.isPending ? "Saving…" : "Save purchase voucher"}
+            {save.isPending ? "Saving…" : "Save purchase record"}
           </button>
         </div>
       </form>
