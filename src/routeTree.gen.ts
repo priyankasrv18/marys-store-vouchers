@@ -15,7 +15,8 @@ import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedIssueRouteImport } from './routes/_authenticated/issue'
 import { Route as AuthenticatedLedgerRouteImport } from './routes/_authenticated/ledger'
 import { Route as AuthenticatedReceiveRouteImport } from './routes/_authenticated/receive'
-import { Route as AuthenticatedVouchersRouteImport } from './routes/_authenticated/vouchers'
+import { Route as AuthenticatedExcelRouteImport } from './routes/_authenticated/excel'
+import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/users'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -29,6 +30,16 @@ const AuthRoute = AuthRouteImport.update({
 const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedExcelRoute = AuthenticatedExcelRouteImport.update({
+  id: '/excel',
+  path: '/excel',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedUsersRoute = AuthenticatedUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedIssueRoute = AuthenticatedIssueRouteImport.update({
@@ -46,36 +57,34 @@ const AuthenticatedReceiveRoute = AuthenticatedReceiveRouteImport.update({
   path: '/receive',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedVouchersRoute = AuthenticatedVouchersRouteImport.update({
-  id: '/vouchers',
-  path: '/vouchers',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
+  '/excel': typeof AuthenticatedExcelRoute
+  '/users': typeof AuthenticatedUsersRoute
   '/': typeof AuthenticatedIndexRoute
   '/auth': typeof AuthRoute
   '/issue': typeof AuthenticatedIssueRoute
   '/ledger': typeof AuthenticatedLedgerRoute
   '/receive': typeof AuthenticatedReceiveRoute
-  '/vouchers': typeof AuthenticatedVouchersRoute
 }
 export interface FileRoutesByTo {
+  '/excel': typeof AuthenticatedExcelRoute
+  '/users': typeof AuthenticatedUsersRoute
   '/auth': typeof AuthRoute
   '/issue': typeof AuthenticatedIssueRoute
   '/ledger': typeof AuthenticatedLedgerRoute
   '/receive': typeof AuthenticatedReceiveRoute
-  '/vouchers': typeof AuthenticatedVouchersRoute
   '/': typeof AuthenticatedIndexRoute
 }
 export interface FileRoutesById {
+  '/_authenticated/excel': typeof AuthenticatedExcelRoute
+  '/_authenticated/users': typeof AuthenticatedUsersRoute
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/issue': typeof AuthenticatedIssueRoute
   '/_authenticated/ledger': typeof AuthenticatedLedgerRoute
   '/_authenticated/receive': typeof AuthenticatedReceiveRoute
-  '/_authenticated/vouchers': typeof AuthenticatedVouchersRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
 }
 export interface FileRouteTypes {
@@ -89,7 +98,6 @@ export interface FileRouteTypes {
     | '/_authenticated/issue'
     | '/_authenticated/ledger'
     | '/_authenticated/receive'
-    | '/_authenticated/vouchers'
     | '/_authenticated/'
   fileRoutesById: FileRoutesById
 }
@@ -121,6 +129,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/excel': {
+      id: '/_authenticated/excel'
+      path: '/excel'
+      fullPath: '/excel'
+      preLoaderRoute: typeof AuthenticatedExcelRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/users': {
+      id: '/_authenticated/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof AuthenticatedUsersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/issue': {
       id: '/_authenticated/issue'
       path: '/issue'
@@ -142,29 +164,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReceiveRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/vouchers': {
-      id: '/_authenticated/vouchers'
-      path: '/vouchers'
-      fullPath: '/vouchers'
-      preLoaderRoute: typeof AuthenticatedVouchersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedExcelRoute: typeof AuthenticatedExcelRoute
+  AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
   AuthenticatedIssueRoute: typeof AuthenticatedIssueRoute
   AuthenticatedLedgerRoute: typeof AuthenticatedLedgerRoute
   AuthenticatedReceiveRoute: typeof AuthenticatedReceiveRoute
-  AuthenticatedVouchersRoute: typeof AuthenticatedVouchersRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedExcelRoute: AuthenticatedExcelRoute,
+  AuthenticatedUsersRoute: AuthenticatedUsersRoute,
   AuthenticatedIssueRoute: AuthenticatedIssueRoute,
   AuthenticatedLedgerRoute: AuthenticatedLedgerRoute,
   AuthenticatedReceiveRoute: AuthenticatedReceiveRoute,
-  AuthenticatedVouchersRoute: AuthenticatedVouchersRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
 
