@@ -9,12 +9,12 @@ export const Route = createFileRoute("/_authenticated/")({
       {
         name: "description",
         content:
-          "Live stock value, low-stock alerts and recent purchase and issue vouchers for the St. Mary's stores department.",
+          "Live stock value, low-stock alerts and recent purchase and issue records for the St. Mary's stores department.",
       },
       { property: "og:title", content: "Stores Dashboard | St. Mary's Guntur" },
       {
         property: "og:description",
-        content: "Live stock value, low-stock alerts and recent vouchers.",
+        content: "Live stock value, low-stock alerts and recent records.",
       },
     ],
   }),
@@ -47,7 +47,7 @@ function Dashboard() {
         <div>
           <h1 className="text-2xl font-bold">Stores Dashboard</h1>
           <p className="text-sm text-muted-foreground">
-            Purchase &amp; issue vouchers with live stock position
+            Purchase &amp; issue records with live stock position
           </p>
         </div>
         <div className="flex gap-2">
@@ -78,12 +78,12 @@ function Dashboard() {
           note="at or below reorder level"
         />
         <Stat
-          label="Receive vouchers"
+          label="Receive records"
           value={String(receipts.data?.length ?? 0)}
           note="purchases recorded"
         />
         <Stat
-          label="Issue vouchers"
+          label="Issue records"
           value={String(issues.data?.length ?? 0)}
           note="materials issued"
         />
@@ -118,7 +118,7 @@ function Dashboard() {
           <ul className="mt-3 divide-y divide-line text-sm">
             {(receipts.data ?? []).slice(0, 6).map((r) => (
               <li key={r.id} className="flex items-center justify-between gap-3 py-2">
-                <span className="num text-xs text-muted-foreground">{r.voucher_no}</span>
+                <span className="num text-xs text-muted-foreground">{r.record_no}</span>
                 <span className="flex-1 truncate">{nameOf(r.item_id)}</span>
                 <span className="num">{rupees(r.total_amount)}</span>
               </li>
@@ -133,7 +133,7 @@ function Dashboard() {
           <ul className="mt-3 divide-y divide-line text-sm">
             {(issues.data ?? []).slice(0, 6).map((r) => (
               <li key={r.id} className="flex items-center justify-between gap-3 py-2">
-                <span className="num text-xs text-muted-foreground">{r.voucher_no}</span>
+                <span className="num text-xs text-muted-foreground">{r.record_no}</span>
                 <span className="flex-1 truncate">
                   {nameOf(r.item_id)} &middot; {r.issued_to}
                 </span>
