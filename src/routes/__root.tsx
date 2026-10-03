@@ -78,11 +78,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Stores Voucher System | St. Mary's Guntur" },
+      { title: "Stores Management System | St. Mary's Guntur" },
       {
         name: "description",
         content:
-          "Stores voucher and stock ledger system for St. Mary's Group of Institutions for Women, Guntur.",
+          "Stores and stock ledger system for St. Mary's Group of Institutions for Women, Guntur.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

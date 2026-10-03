@@ -155,7 +155,6 @@ function IssuePage() {
       if (selected && qty > selected.available_stock)
         throw new Error(`Only ${selected.available_stock} ${selected.unit} available`);
 
-      if (!me.data?.user) throw new Error("You must be signed in");
       const attachmentOwner = "public";
 
       const { data: issue, error } = await supabase

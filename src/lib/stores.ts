@@ -98,7 +98,7 @@ export const receiptsQuery = {
       .select("*")
       .order("created_at", { ascending: false });
     if (error) throw error;
-    return (data ?? []) as Receipt[];
+    return (data ?? []) as unknown as Receipt[];
   },
 };
 
@@ -110,7 +110,7 @@ export const issuesQuery = {
       .select("*")
       .order("created_at", { ascending: false });
     if (error) throw error;
-    return (data ?? []) as Issue[];
+    return (data ?? []) as unknown as Issue[];
   },
 };
 
