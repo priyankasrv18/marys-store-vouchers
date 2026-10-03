@@ -68,6 +68,7 @@ export type Database = {
           issued_to: string
           item_id: string
           qty_issued: number
+          record_no: string
           using_area: string | null
           voucher_no: string
         }
@@ -83,8 +84,9 @@ export type Database = {
           issued_to: string
           item_id: string
           qty_issued?: number
+          record_no?: string
           using_area?: string | null
-          voucher_no: string
+          voucher_no?: string
         }
         Update: {
           authorised_by?: string | null
@@ -98,6 +100,7 @@ export type Database = {
           issued_to?: string
           item_id?: string
           qty_issued?: number
+          record_no?: string
           using_area?: string | null
           voucher_no?: string
         }
@@ -207,6 +210,7 @@ export type Database = {
           mfg_date: string | null
           purchase_date: string
           quantity: number
+          record_no: string
           total_amount: number
           unit_price: number
           vendor_address: string | null
@@ -225,12 +229,13 @@ export type Database = {
           mfg_date?: string | null
           purchase_date?: string
           quantity?: number
+          record_no?: string
           total_amount?: number
           unit_price?: number
           vendor_address?: string | null
           vendor_name: string
           vendor_phone?: string | null
-          voucher_no: string
+          voucher_no?: string
         }
         Update: {
           approved_by?: string | null
@@ -243,6 +248,7 @@ export type Database = {
           mfg_date?: string | null
           purchase_date?: string
           quantity?: number
+          record_no?: string
           total_amount?: number
           unit_price?: number
           vendor_address?: string | null
@@ -259,6 +265,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      staff_members: {
+        Row: {
+          college: string | null
+          created_at: string
+          department: string | null
+          designation: string | null
+          email: string | null
+          full_name: string
+          id: string
+          phone: string | null
+        }
+        Insert: {
+          college?: string | null
+          created_at?: string
+          department?: string | null
+          designation?: string | null
+          email?: string | null
+          full_name: string
+          id?: string
+          phone?: string | null
+        }
+        Update: {
+          college?: string | null
+          created_at?: string
+          department?: string | null
+          designation?: string | null
+          email?: string | null
+          full_name?: string
+          id?: string
+          phone?: string | null
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
