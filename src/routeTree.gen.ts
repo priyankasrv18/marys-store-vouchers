@@ -17,7 +17,6 @@ import { Route as AuthenticatedIssueRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedLedgerRouteImport } from './routes/_authenticated/ledger'
 import { Route as AuthenticatedReceiveRouteImport } from './routes/_authenticated/receive'
 import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/users'
-import { Route as AuthenticatedVouchersRouteImport } from './routes/_authenticated/vouchers'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -58,11 +57,6 @@ const AuthenticatedUsersRoute = AuthenticatedUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedVouchersRoute = AuthenticatedVouchersRouteImport.update({
-  id: '/vouchers',
-  path: '/vouchers',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -72,7 +66,6 @@ export interface FileRoutesByFullPath {
   '/ledger': typeof AuthenticatedLedgerRoute
   '/receive': typeof AuthenticatedReceiveRoute
   '/users': typeof AuthenticatedUsersRoute
-  '/vouchers': typeof AuthenticatedVouchersRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
@@ -81,7 +74,6 @@ export interface FileRoutesByTo {
   '/ledger': typeof AuthenticatedLedgerRoute
   '/receive': typeof AuthenticatedReceiveRoute
   '/users': typeof AuthenticatedUsersRoute
-  '/vouchers': typeof AuthenticatedVouchersRoute
   '/': typeof AuthenticatedIndexRoute
 }
 export interface FileRoutesById {
@@ -93,30 +85,14 @@ export interface FileRoutesById {
   '/_authenticated/ledger': typeof AuthenticatedLedgerRoute
   '/_authenticated/receive': typeof AuthenticatedReceiveRoute
   '/_authenticated/users': typeof AuthenticatedUsersRoute
-  '/_authenticated/vouchers': typeof AuthenticatedVouchersRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
-    | '/auth'
-    | '/excel'
-    | '/issue'
-    | '/ledger'
-    | '/receive'
-    | '/users'
-    | '/vouchers'
+    '/' | '/auth' | '/excel' | '/issue' | '/ledger' | '/receive' | '/users'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/auth'
-    | '/excel'
-    | '/issue'
-    | '/ledger'
-    | '/receive'
-    | '/users'
-    | '/vouchers'
-    | '/'
+  to: '/auth' | '/excel' | '/issue' | '/ledger' | '/receive' | '/users' | '/'
   id:
     | '__root__'
     | '/_authenticated'
@@ -126,7 +102,6 @@ export interface FileRouteTypes {
     | '/_authenticated/ledger'
     | '/_authenticated/receive'
     | '/_authenticated/users'
-    | '/_authenticated/vouchers'
     | '/_authenticated/'
   fileRoutesById: FileRoutesById
 }
@@ -193,13 +168,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/vouchers': {
-      id: '/_authenticated/vouchers'
-      path: '/vouchers'
-      fullPath: '/vouchers'
-      preLoaderRoute: typeof AuthenticatedVouchersRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
   }
 }
 
@@ -209,7 +177,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedLedgerRoute: typeof AuthenticatedLedgerRoute
   AuthenticatedReceiveRoute: typeof AuthenticatedReceiveRoute
   AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
-  AuthenticatedVouchersRoute: typeof AuthenticatedVouchersRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
 
@@ -219,7 +186,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedLedgerRoute: AuthenticatedLedgerRoute,
   AuthenticatedReceiveRoute: AuthenticatedReceiveRoute,
   AuthenticatedUsersRoute: AuthenticatedUsersRoute,
-  AuthenticatedVouchersRoute: AuthenticatedVouchersRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
 
